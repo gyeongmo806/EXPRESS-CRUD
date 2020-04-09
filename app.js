@@ -8,21 +8,34 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(express.static('public'))
 
-let data = [];
-
-fs.exists('./public/data.txt',function(exists){
-  console.log(exists ? "it'there" : opendata())
-  readdata()
-})
-readdata = ()=> {
-  console.log('readdata')
-  fs.readFile('./public/data.txt','utf8',(err,_data)=>{
-    if(err) throw err;
-    let json = JSON.parse(_data)
-    data = json
-  })
-
-}
+let data = [
+  {
+    id: 1,
+    title:
+      "Hello 1",
+    des:
+      "example 1",
+  },
+  {
+    id: 2,
+    title:
+      "Hello 2",
+    des:
+      "example 2",
+  },
+  {
+    id: 3,
+    title: "ㄴㄷ고",
+    des: "ㄴㄷ고",
+  },
+  {
+    id: 4,
+    title:
+      "안녕하세용.",
+    des:
+      "테스트입니다.",
+  }
+];
 
 app.get('/api/readcontents',(req,res)=>{
     res.send(data) 
@@ -32,8 +45,21 @@ app.get('/create',(req,res)=>{
   res.sendFile(__dirname+'/public/create.html')
 })
 
+app.get('/:id',(req,res)=>{
+  console.log(req.params.id)
+  console.log(data[1].id)
+  let content
+  for(let i = 0; i < data.length; i++){
+    if(data[i].id == req.params.id){
+      content = data[i]
+    }
+  }
+  console.log(content)
+  res.send(content)
+})
+
 app.post('/api/create',(req,res)=>{
-    const _id = data.length
+    const _id = data.length+1
     data.push({id:_id,title:req.body.title,des:req.body.des})
     console.log('data push')
     fs.writeFile('./public/data.txt',JSON.stringify(data),'utf8',(err)=>{

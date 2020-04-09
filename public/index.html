@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <title>
             CRUD-APP
         </title>
     </head>
     <body>
+        
         <header>
             <h1>
                 CRUD
@@ -18,24 +20,38 @@
             </ul>
         </nav>
         <section>
-            
             <article>
                 <div class="contents-list">
                     <ul>
                         <!-- contents가 들어갑니다. -->
                     </ul>
                 </div>
+                <div class="selected-content">
+                    <div>
+                        <!-- content가 들어갑니다. -->
+                    </div>
+                </div>
             </article>
         </section>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        
         <script>
             fetch('api/readcontents').then(response => {
                 return response.json()
             }).then(res=>{
                 res.map(data => {
-                    $('.contents-list ul').append(`<li id='${data.id}'><h2>${data.title}</h2><span>${data.des}</span></li>`)
+                    $('.contents-list ul').append(`<a href="#"><li id='${data.id}'><h2>${data.title}</h2></li></a>`)
                 })    
-            })
+                $('a').click((event)=>{   
+                    let id = $(event.target).parent().attr('id')
+                    console.log(id)
+                    fetch(`/${id}`).then(response => {
+                        return response.json()
+                    }).then((res)=>{
+                        $('.selected-content div').children().remove()
+                        $('.selected-content div').append(`<h2>${res.title}</h2><h2>${res.des}</h2>`)
+                    })
+                })
+            })    
         </script>
     </body>
 </html>
